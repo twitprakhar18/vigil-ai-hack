@@ -1,10 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from mock_data import GEO_DATA, SOV_TREND
+from mock_data import GEO_DATA, get_sov_trend_for_range
 from integrations.geo_audit import run_geo_audit
 
 router = APIRouter(prefix="/geo", tags=["geo"])
@@ -32,9 +32,9 @@ def get_geo_audit():
 
 
 @router.get("/sov")
-def get_share_of_voice():
-    """Get Share of Voice trend data."""
-    return {"trend": SOV_TREND}
+def get_share_of_voice(time_range: str | None = Query(None, alias="range")):
+    """Get Share of Voice trend data for the selected period (mock)."""
+    return {"trend": get_sov_trend_for_range(time_range)}
 
 
 @router.post("/audit-refresh")

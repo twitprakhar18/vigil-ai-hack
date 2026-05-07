@@ -15,7 +15,8 @@ import {
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import TrustScoreGauge from "@/components/TrustScoreGauge";
 import { normalizeTrustPayload, sanitizeSovTrend, type TrustPayload } from "@/lib/dashboardPayload";
-import { fetchTrustScore, fetchSOV } from "@/lib/api";
+import { fetchTrustScore, fetchSOV, type TimeRangeKey } from "@/lib/api";
+import { TIME_RANGE_OPTIONS } from "@/lib/timeRange";
 
 const SOVChart = dynamic(() => import("@/components/SOVChart"), {
   ssr: false,
@@ -43,6 +44,7 @@ function KpiShell({
 }
 
 export default function DashboardPage() {
+  const [timeRange, setTimeRange] = useState<TimeRangeKey>("6m");
   const [trust, setTrust] = useState<TrustPayload | null>(null);
   const [sov, setSOV] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +63,7 @@ export default function DashboardPage() {
       }
     }, 12000);
 
-    fetchTrustScore(ac.signal)
+    fetchTrustScore({ signal: ac.signal, range: timeRange })
       .then((data) => {
         settled = true;
         window.clearTimeout(slowTimer);
@@ -80,7 +82,7 @@ export default function DashboardPage() {
         setError(msg);
       });
 
-    fetchSOV(ac.signal)
+    fetchSOV({ signal: ac.signal, range: timeRange })
       .then((d) => {
         setSOV(sanitizeSovTrend(d?.trend));
       })
@@ -90,7 +92,7 @@ export default function DashboardPage() {
       ac.abort();
       window.clearTimeout(slowTimer);
     };
-  }, []);
+  }, [timeRange]);
 
   const weeklyDelta = useMemo(() => {
     if (!trust?.trend || trust.trend.length < 2) return null;
@@ -102,6 +104,8 @@ export default function DashboardPage() {
     }
     return a - b;
   }, [trust]);
+
+  const rangeSubtitle = TIME_RANGE_OPTIONS.find((o) => o.value === timeRange)?.label ?? "Selected period";
 
   const competitorMagic =
     Array.isArray(sov) && sov.length > 0 ? sov[sov.length - 1].magicbricks : null;
@@ -178,7 +182,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="px-2 pb-0.5">
-            <span className="text-sm font-medium text-[#4f4f4f]">Last 30 days</span>
+            <span className="text-sm font-medium text-[#4f4f4f]">{rangeSubtitle}</span>
           </div>
         </KpiShell>
 
@@ -246,8 +250,8 @@ export default function DashboardPage() {
             {trustReady ? (
               <TrustScoreGauge score={trust!.score} compact />
             ) : (
-              <div className="flex h-[100px] w-full flex-col items-center justify-center gap-2">
-                <div className="h-[72px] w-[140px] animate-pulse rounded-t-[100px] bg-[#eef2f4]" />
+              <div className="flex h-[120px] w-full flex-col items-center justify-center gap-2">
+                <div className="h-[84px] w-[180px] animate-pulse rounded-t-[100px] bg-[#eef2f4]" />
                 <div className="h-9 w-16 animate-pulse rounded bg-[#eef2f4]" />
               </div>
             )}
@@ -292,13 +296,25 @@ export default function DashboardPage() {
                 <h2 className="text-sm font-semibold tracking-[0.32px] text-[#242424]">AI Share of Voice</h2>
                 <p className="mt-0.5 text-[11px] text-[#717171]">vs 99acres, MagicBricks, NoBroker</p>
               </div>
-              <button
-                type="button"
-                className="flex min-w-[140px] items-center justify-between gap-2 rounded-xl border border-[#d2dadf] bg-[#f5f8fa] px-2 py-1.5 text-left text-sm font-medium text-[#4f4f4f]"
-              >
-                Last 7 days
-                <ChevronDown className="size-4 shrink-0 opacity-70" strokeWidth={1.5} />
-              </button>
+              <div className="relative shrink-0">
+                <select
+                  value={timeRange}
+                  onChange={(e) => setTimeRange(e.target.value as TimeRangeKey)}
+                  className="flex min-w-[152px] cursor-pointer appearance-none items-center rounded-xl border border-[#d2dadf] bg-[#f5f8fa] py-1.5 pl-2 pr-9 text-left text-sm font-medium text-[#4f4f4f]"
+                  aria-label="Chart time range"
+                >
+                  {TIME_RANGE_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 opacity-70"
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
+              </div>
             </div>
             <div className="flex min-h-0 w-full flex-1 flex-col">
               {Array.isArray(sov) && sov.length > 0 ? (

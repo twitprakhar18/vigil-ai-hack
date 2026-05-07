@@ -272,3 +272,174 @@ TRUST_SCORE_TREND = [
     {"date": "Apr 27", "score": 61},
     {"date": "May 4", "score": 58},
 ]
+
+# --- Dashboard time ranges (query ?range=7d|1m|3m|6m|1y) ---
+
+VALID_TIME_RANGES = frozenset({"7d", "1m", "3m", "6m", "1y"})
+DEFAULT_TIME_RANGE = "6m"
+
+
+def normalize_time_range(value: str | None) -> str:
+    if value and value.strip().lower() in VALID_TIME_RANGES:
+        return value.strip().lower()
+    return DEFAULT_TIME_RANGE
+
+
+SOV_TREND_BY_RANGE = {
+    "7d": [
+        {"month": "Mon", "housing": 44, "magicbricks": 29, "99acres": 61, "nobroker": 27},
+        {"month": "Tue", "housing": 46, "magicbricks": 30, "99acres": 63, "nobroker": 28},
+        {"month": "Wed", "housing": 45, "magicbricks": 31, "99acres": 62, "nobroker": 29},
+        {"month": "Thu", "housing": 47, "magicbricks": 32, "99acres": 64, "nobroker": 28},
+        {"month": "Fri", "housing": 48, "magicbricks": 33, "99acres": 65, "nobroker": 30},
+        {"month": "Sat", "housing": 47, "magicbricks": 32, "99acres": 64, "nobroker": 31},
+        {"month": "Sun", "housing": 46, "magicbricks": 31, "99acres": 62, "nobroker": 30},
+    ],
+    "1m": [
+        {"month": "W1", "housing": 43, "magicbricks": 30, "99acres": 59, "nobroker": 26},
+        {"month": "W2", "housing": 45, "magicbricks": 31, "99acres": 67, "nobroker": 28},
+        {"month": "W3", "housing": 47, "magicbricks": 33, "99acres": 72, "nobroker": 32},
+        {"month": "W4", "housing": 46, "magicbricks": 34, "99acres": 78, "nobroker": 48},
+    ],
+    "3m": [
+        {"month": "Mar", "housing": 44, "magicbricks": 49, "99acres": 68, "nobroker": 54},
+        {"month": "Apr", "housing": 52, "magicbricks": 43, "99acres": 84, "nobroker": 57},
+        {"month": "May", "housing": 48, "magicbricks": 46, "99acres": 96, "nobroker": 60},
+    ],
+    "6m": SOV_TREND,
+    "1y": [
+        {"month": "Jun", "housing": 38, "magicbricks": 28, "99acres": 52, "nobroker": 22},
+        {"month": "Jul", "housing": 40, "magicbricks": 29, "99acres": 55, "nobroker": 23},
+        {"month": "Aug", "housing": 41, "magicbricks": 30, "99acres": 58, "nobroker": 23},
+        {"month": "Sep", "housing": 42, "magicbricks": 30, "99acres": 58, "nobroker": 24},
+        {"month": "Oct", "housing": 41, "magicbricks": 31, "99acres": 57, "nobroker": 24},
+        {"month": "Nov", "housing": 42, "magicbricks": 31, "99acres": 58, "nobroker": 24},
+        {"month": "Dec", "housing": 42, "magicbricks": 31, "99acres": 58, "nobroker": 24},
+        {"month": "Jan", "housing": 46, "magicbricks": 33, "99acres": 74, "nobroker": 22},
+        {"month": "Feb", "housing": 50, "magicbricks": 34, "99acres": 90, "nobroker": 52},
+        {"month": "Mar", "housing": 44, "magicbricks": 49, "99acres": 68, "nobroker": 54},
+        {"month": "Apr", "housing": 52, "magicbricks": 43, "99acres": 84, "nobroker": 57},
+        {"month": "May", "housing": 48, "magicbricks": 46, "99acres": 96, "nobroker": 60},
+    ],
+}
+
+TRUST_SCORE_TREND_BY_RANGE = {
+    "7d": [
+        {"date": "Mon", "score": 64},
+        {"date": "Tue", "score": 62},
+        {"date": "Wed", "score": 65},
+        {"date": "Thu", "score": 60},
+        {"date": "Fri", "score": 59},
+        {"date": "Sat", "score": 58},
+        {"date": "Sun", "score": 57},
+    ],
+    "1m": [
+        {"date": "W1", "score": 68},
+        {"date": "W2", "score": 65},
+        {"date": "W3", "score": 63},
+        {"date": "W4", "score": 60},
+    ],
+    "3m": [
+        {"date": "Mar", "score": 70},
+        {"date": "Apr", "score": 64},
+        {"date": "May", "score": 58},
+    ],
+    "6m": TRUST_SCORE_TREND,
+    "1y": [
+        {"date": "Jun", "score": 76},
+        {"date": "Jul", "score": 74},
+        {"date": "Aug", "score": 73},
+        {"date": "Sep", "score": 71},
+        {"date": "Oct", "score": 69},
+        {"date": "Nov", "score": 67},
+        {"date": "Dec", "score": 66},
+        {"date": "Jan", "score": 64},
+        {"date": "Feb", "score": 62},
+        {"date": "Mar", "score": 61},
+        {"date": "Apr", "score": 59},
+        {"date": "May", "score": 58},
+    ],
+}
+
+TRUST_META_BY_RANGE = {
+    "7d": {
+        "score": 61,
+        "sentiment_score": 42,
+        "response_rate": 22,
+        "geo_score": 17,
+        "total_mentions": 184,
+        "positive": 62,
+        "negative": 71,
+        "neutral": 51,
+        "crisis_alerts": 6,
+    },
+    "1m": {
+        "score": 55,
+        "sentiment_score": 38,
+        "response_rate": 23,
+        "geo_score": 16,
+        "total_mentions": 612,
+        "positive": 198,
+        "negative": 224,
+        "neutral": 190,
+        "crisis_alerts": 18,
+    },
+    "3m": {
+        "score": 48,
+        "sentiment_score": 35,
+        "response_rate": 23,
+        "geo_score": 16,
+        "total_mentions": 1580,
+        "positive": 512,
+        "negative": 548,
+        "neutral": 520,
+        "crisis_alerts": 42,
+    },
+    "6m": {
+        "score": 24,
+        "sentiment_score": 33,
+        "response_rate": 23,
+        "geo_score": 16,
+        "total_mentions": 15,
+        "positive": 5,
+        "negative": 8,
+        "neutral": 2,
+        "crisis_alerts": 3,
+    },
+    "1y": {
+        "score": 52,
+        "sentiment_score": 36,
+        "response_rate": 24,
+        "geo_score": 17,
+        "total_mentions": 5820,
+        "positive": 1890,
+        "negative": 2010,
+        "neutral": 1920,
+        "crisis_alerts": 156,
+    },
+}
+
+
+def get_trust_score_response(range_key: str) -> dict:
+    key = normalize_time_range(range_key)
+    meta = TRUST_META_BY_RANGE[key]
+    trend = TRUST_SCORE_TREND_BY_RANGE[key]
+    return {
+        "score": meta["score"],
+        "sentiment_score": meta["sentiment_score"],
+        "response_rate": meta["response_rate"],
+        "geo_score": meta["geo_score"],
+        "trend": trend,
+        "breakdown": {
+            "total_mentions": meta["total_mentions"],
+            "positive": meta["positive"],
+            "negative": meta["negative"],
+            "neutral": meta["neutral"],
+            "crisis_alerts": meta["crisis_alerts"],
+        },
+    }
+
+
+def get_sov_trend_for_range(range_key: str) -> list:
+    key = normalize_time_range(range_key)
+    return SOV_TREND_BY_RANGE[key]

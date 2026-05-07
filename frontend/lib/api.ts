@@ -51,8 +51,15 @@ async function fetchJson(
   }
 }
 
-export async function fetchTrustScore(signal?: AbortSignal) {
-  return fetchJson("/trust-score/", signal ? { signal } : undefined);
+export type TimeRangeKey = "7d" | "1m" | "3m" | "6m" | "1y";
+
+export async function fetchTrustScore(options?: { signal?: AbortSignal; range?: TimeRangeKey }) {
+  const { signal, range } = options ?? {};
+  const params = new URLSearchParams();
+  if (range) params.set("range", range);
+  const qs = params.toString();
+  const path = `/trust-score/${qs ? `?${qs}` : ""}`;
+  return fetchJson(path, signal ? { signal } : undefined);
 }
 
 export async function fetchMentions(
@@ -75,8 +82,13 @@ export async function fetchGeoAudit(signal?: AbortSignal) {
   return fetchJson("/geo/audit", signal ? { signal } : undefined);
 }
 
-export async function fetchSOV(signal?: AbortSignal) {
-  return fetchJson("/geo/sov", signal ? { signal } : undefined);
+export async function fetchSOV(options?: { signal?: AbortSignal; range?: TimeRangeKey }) {
+  const { signal, range } = options ?? {};
+  const params = new URLSearchParams();
+  if (range) params.set("range", range);
+  const qs = params.toString();
+  const path = `/geo/sov${qs ? `?${qs}` : ""}`;
+  return fetchJson(path, signal ? { signal } : undefined);
 }
 
 export async function draftResponse(

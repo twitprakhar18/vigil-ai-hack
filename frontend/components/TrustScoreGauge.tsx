@@ -19,10 +19,10 @@ export default function TrustScoreGauge({
   /** Each segment = 100/segments points; round up so 24/100 → 10 of 40 segments. */
   const filledCount = Math.min(segments, Math.ceil((clamped / 100) * segments));
 
-  const cx = compact ? 80 : 100;
-  const cy = compact ? 88 : 108;
-  const outerR = compact ? 62 : 78;
-  const strokeW = compact ? 5.5 : 6.5;
+  const cx = 100;
+  const cy = compact ? 98 : 108;
+  const outerR = compact ? 76 : 78;
+  const strokeW = compact ? 8.5 : 7;
 
   const inactive = "#d4dce4";
   const active = "#db8e8e";
@@ -47,9 +47,9 @@ export default function TrustScoreGauge({
     });
   }
 
-  const vb = compact ? "0 0 160 108" : "0 0 200 130";
-  const sw = compact ? 160 : 200;
-  const sh = compact ? 108 : 130;
+  const vb = compact ? "0 0 200 118" : "0 0 200 130";
+  const sw = compact ? 200 : 200;
+  const sh = compact ? 118 : 130;
 
   const display = Math.round(clamped);
 
@@ -68,11 +68,11 @@ export default function TrustScoreGauge({
         ))}
       </svg>
       <p className="flex items-baseline justify-center gap-0.5 leading-none tracking-tight">
-        <span className={`font-semibold text-[#242424] ${compact ? "text-[34px]" : "text-[44px]"}`}>{display}</span>
+        <span className={`font-semibold text-[#242424] ${compact ? "text-[36px]" : "text-[44px]"}`}>{display}</span>
         {showPercentSuffix ? (
-          <span className={`font-semibold text-[#242424] ${compact ? "text-[34px]" : "text-[44px]"}`}>%</span>
+          <span className={`font-semibold text-[#242424] ${compact ? "text-[36px]" : "text-[44px]"}`}>%</span>
         ) : (
-          <span className={`font-normal text-[#717171] ${compact ? "text-[15px]" : "text-lg"}`}>/100</span>
+          <span className={`font-normal text-[#717171] ${compact ? "text-base" : "text-lg"}`}>/100</span>
         )}
       </p>
     </div>
