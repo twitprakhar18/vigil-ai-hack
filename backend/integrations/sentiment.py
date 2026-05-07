@@ -1,7 +1,8 @@
-from transformers import pipeline
 from typing import Dict, Any
 
 try:
+    from transformers import pipeline
+
     # Load English sentiment model
     classifier_en = pipeline(
         "sentiment-analysis",

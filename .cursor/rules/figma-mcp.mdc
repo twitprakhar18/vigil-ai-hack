@@ -1,0 +1,22 @@
+---
+description: Figma MCP — design-to-code workflow and assets (matches Figma Cursor plugin guidance)
+globs: frontend/**/*.{tsx,ts,css}
+alwaysApply: false
+---
+
+# Figma MCP
+
+When implementing from a Figma link or Figma-driven request:
+
+1. Use Figma MCP tools to fetch structured design context for the target node(s) before writing UI code.
+2. If context is large or truncated, fetch metadata first, then narrow to the nodes you need.
+3. Use a screenshot/visual reference for the variant you are matching when available.
+4. Treat MCP output (often React + Tailwind) as **design intent**, not final style: map to this repo’s patterns (Next.js App Router, existing components, Tailwind theme).
+5. Reuse existing UI primitives and tokens; avoid duplicating buttons, inputs, and typography already in the codebase.
+6. Aim for visual parity with the design; prefer design tokens over magic numbers when they conflict slightly.
+
+## Assets from Figma MCP
+
+- The server may return **localhost** URLs for images or SVGs from its assets endpoint.
+- **Use those URLs directly** when provided; do not swap in placeholder images or generic icon packs for supplied assets.
+- Do **not** add new icon libraries for assets already supplied by Figma MCP.
