@@ -6,51 +6,88 @@ function getApiBase(): string {
   return "http://127.0.0.1:8000";
 }
 
-async function fetchJson(path: string, init?: RequestInit & { timeoutMs?: number }) {
-  const { timeoutMs = 15000, ...req } = init ?? {};
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+async function fetchJson(
+  path: string,
+  init?: RequestInit & { timeoutMs?: number }
+) {
+  const { timeoutMs = 12000, signal: outerSignal, ...req } = init ?? {};
+  const timeoutCtrl = new AbortController();
+  const t = setTimeout(() => timeoutCtrl.abort(), timeoutMs);
+
+  if (outerSignal) {
+    if (outerSignal.aborted) timeoutCtrl.abort();
+    else outerSignal.addEventListener("abort", () => timeoutCtrl.abort(), { once: true });
+  }
+
   try {
     const base = getApiBase();
-    const res = await fetch(`${base}${path}`, { ...req, signal: ctrl.signal });
+    const res = await fetch(`${base}${path}`, {
+      ...req,
+      signal: timeoutCtrl.signal,
+      cache: "no-store",
+    });
     if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
+      const errText = await res.text().catch(() => "");
+      let detail = "";
+      try {
+        const j = JSON.parse(errText);
+        detail = j.detail || j.message || "";
+      } catch {
+        detail = errText.slice(0, 120);
+      }
+      throw new Error(detail || `HTTP ${res.status}`);
     }
-    return res.json();
+    const text = await res.text();
+    if (!text || !text.trim()) {
+      throw new Error("Empty response from API");
+    }
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error("Invalid JSON from API");
+    }
   } finally {
     clearTimeout(t);
   }
 }
 
-export async function fetchTrustScore() {
-  return fetchJson("/trust-score/");
+export async function fetchTrustScore(signal?: AbortSignal) {
+  return fetchJson("/trust-score/", signal ? { signal } : undefined);
 }
 
-export async function fetchMentions(params?: {
-  triage?: string;
-  sentiment?: string;
-  crisis_only?: boolean;
-}) {
+export async function fetchMentions(
+  params?: {
+    triage?: string;
+    sentiment?: string;
+    crisis_only?: boolean;
+  },
+  signal?: AbortSignal
+) {
   const query = new URLSearchParams();
   if (params?.triage) query.set("triage", params.triage);
   if (params?.sentiment) query.set("sentiment", params.sentiment);
   if (params?.crisis_only) query.set("crisis_only", "true");
 
-  return fetchJson(`/mentions/?${query}`);
+  return fetchJson(`/mentions/?${query}`, signal ? { signal } : undefined);
 }
 
-export async function fetchGeoAudit() {
-  return fetchJson("/geo/audit");
+export async function fetchGeoAudit(signal?: AbortSignal) {
+  return fetchJson("/geo/audit", signal ? { signal } : undefined);
 }
 
-export async function fetchSOV() {
-  return fetchJson("/geo/sov");
+export async function fetchSOV(signal?: AbortSignal) {
+  return fetchJson("/geo/sov", signal ? { signal } : undefined);
 }
 
-export async function draftResponse(mentionId: string, brandVoice: string) {
+export async function draftResponse(
+  mentionId: string,
+  brandVoice: string,
+  signal?: AbortSignal
+) {
   return fetchJson("/ai/draft-response", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ mention_id: mentionId, brand_voice: brandVoice }),
+    ...(signal ? { signal } : {}),
   });
 }

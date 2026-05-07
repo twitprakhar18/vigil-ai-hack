@@ -202,12 +202,13 @@ MENTIONS = [
 ]
 
 SOV_TREND = [
-    {"month": "Dec", "housing": 18, "magicbricks": 34, "99acres": 28, "nobroker": 20},
-    {"month": "Jan", "housing": 20, "magicbricks": 33, "99acres": 27, "nobroker": 20},
-    {"month": "Feb", "housing": 19, "magicbricks": 35, "99acres": 26, "nobroker": 20},
-    {"month": "Mar", "housing": 17, "magicbricks": 36, "99acres": 27, "nobroker": 20},
-    {"month": "Apr", "housing": 16, "magicbricks": 37, "99acres": 28, "nobroker": 19},
-    {"month": "May", "housing": 14, "magicbricks": 38, "99acres": 29, "nobroker": 19},
+    # Dec 2025 → May 2026 — design-shaped curves; Feb anchors match Figma tooltip (99acres 90, nobroker 52, housing 50, magicbricks 34).
+    {"month": "Dec", "housing": 42, "magicbricks": 31, "99acres": 58, "nobroker": 24},
+    {"month": "Jan", "housing": 46, "magicbricks": 33, "99acres": 74, "nobroker": 22},
+    {"month": "Feb", "housing": 50, "magicbricks": 34, "99acres": 90, "nobroker": 52},
+    {"month": "Mar", "housing": 44, "magicbricks": 49, "99acres": 68, "nobroker": 54},
+    {"month": "Apr", "housing": 52, "magicbricks": 43, "99acres": 84, "nobroker": 57},
+    {"month": "May", "housing": 48, "magicbricks": 46, "99acres": 96, "nobroker": 60},
 ]
 
 GEO_DATA = {

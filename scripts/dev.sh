@@ -26,11 +26,36 @@ trap cleanup EXIT INT TERM
 ) &
 BE_PID=$!
 
+echo "Waiting for API on http://127.0.0.1:8000 ..."
+for _ in {1..60}; do
+  if curl -sf "http://127.0.0.1:8000/health" >/dev/null 2>&1; then
+    echo "API ready."
+    break
+  fi
+  sleep 0.25
+done
+
+if [[ -z "${SKIP_PORT_CHECK:-}" ]] && command -v lsof >/dev/null 2>&1 && lsof -iTCP:3000 -sTCP:LISTEN >/dev/null 2>&1; then
+  echo ""
+  echo "ERROR: Port 3000 is already in use."
+  echo "Another process is serving http://localhost:3000 — not necessarily this Next app."
+  echo "That causes HTML from one server and /_next chunks from another → no CSS, broken JS."
+  echo ""
+  echo "Fix: stop whatever is on 3000 (e.g. run: lsof -iTCP:3000 -sTCP:LISTEN)"
+  echo "Or set SKIP_PORT_CHECK=1 to skip this guard (you must open Next's printed 'Local:' URL)."
+  echo ""
+  exit 1
+fi
+
 (
   cd "$ROOT/frontend"
   exec npm run dev
 ) &
 FE_PID=$!
 
-echo "Backend: http://127.0.0.1:8000  |  Frontend: http://localhost:3000"
+echo "Backend: http://127.0.0.1:8000"
+echo "Frontend: http://localhost:3000 (Next default bind; use this URL after Next prints Ready)"
+echo ""
+echo "Tip: If chunks 404 or webpack ENOENT, stop dev and run: cd frontend && npm run dev:clean"
+echo ""
 wait "$BE_PID" "$FE_PID"
