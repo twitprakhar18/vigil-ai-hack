@@ -5,6 +5,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+if [[ ! -x "$ROOT/frontend/node_modules/.bin/next" ]]; then
+  echo "Frontend deps missing; running npm install in frontend/ ..."
+  (cd "$ROOT/frontend" && npm install)
+fi
+
 BE_PID=""
 FE_PID=""
 

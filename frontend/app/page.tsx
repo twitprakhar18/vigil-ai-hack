@@ -13,7 +13,11 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchTrustScore().then(setTrust).catch(() => setError("Cannot reach backend at localhost:8000"));
+    fetchTrustScore()
+      .then(setTrust)
+      .catch(() =>
+        setError("Cannot reach the API — start the backend from the project root: npm run dev")
+      );
     fetchSOV().then((d) => setSOV(d.trend)).catch(() => {});
   }, []);
 
